@@ -1,0 +1,113 @@
+.location {
+    padding: 6rem 2rem;
+    background-color: var(--color-main-100);
+    text-align: center;
+}
+
+.location-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.location-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 4rem;
+    margin-top: 4rem;
+    align-items: center;
+}
+
+.map-container {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    height: 400px;
+    position: relative;
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.contact-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--color-primary-300), var(--color-secondary-300));
+}
+
+.contact-card h3 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--color-primary-400);
+}
+
+.contact-info {
+    margin-bottom: 2rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.contact-icon {
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-primary-100);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    color: var(--color-primary-300);
+    font-size: 1.5rem;
+}
+
+.contact-text h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+    color: var(--color-main-500);
+}
+
+.contact-text p, .contact-text a {
+    color: var(--color-main-400);
+    font-size: 1rem;
+}
+
+.hours-list li {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed var(--color-main-300);
+}
+
+.hours-list li:last-child {
+    border-bottom: none;
+}
+
+.day {
+    font-weight: 600;
+    color: var(--color-main-500);
+}
+
+.time {
+    color: var(--color-primary-400);
+}

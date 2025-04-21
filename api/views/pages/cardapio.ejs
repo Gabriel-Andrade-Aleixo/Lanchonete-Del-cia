@@ -1,0 +1,116 @@
+<div class="menu-container">
+    <div class="menu-header">
+        <h1>Cardápio Digital</h1>
+        <div class="search-filter">
+            <form action="/cardapio/buscar" method="GET">
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="<%= searchTerm || '' %>" 
+                    placeholder="Buscar produtos..."
+                >
+                <select name="categoria">
+                    <option value="">Todas as Categorias</option>
+                    <option value="hamburguer" <%= categoria === 'hamburguer' ? 'selected' : '' %>>Hambúrgueres</option>
+                    <option value="bebida" <%= categoria === 'bebida' ? 'selected' : '' %>>Bebidas</option>
+                    <option value="sobremesa" <%= categoria === 'sobremesa' ? 'selected' : '' %>>Sobremesas</option>
+                    <option value="acompanhamento" <%= categoria === 'acompanhamento' ? 'selected' : '' %>>Acompanhamentos</option>
+                </select>
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+    <% if (typeof produtos !== 'undefined' && produtos.length > 0) { %>
+        <div class="menu-grid">
+            <% produtos.forEach(produto => { %>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="<%= produto.imagem %>" alt="<%= produto.nome %>">
+                    </div>
+                    <div class="product-info">
+                        <h3><%= produto.nome %></h3>
+                        <p class="product-description"><%= produto.descricao %></p>
+                        <div class="product-ingredients">
+                            <strong>Ingredientes:</strong> <%= produto.ingredientes %>
+                        </div>
+                        <div class="product-footer">
+                            <span class="product-price">R$ <%= produto.preco %></span>
+                            <button class="nutrition-btn" 
+                                data-nutricao='<%= JSON.stringify(produto.informacoesNutricionais) %>'
+                                data-nome="<%= produto.nome %>"
+                                data-imagem="<%= produto.imagem %>">
+                                Informação Nutricional
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <p class="no-results">Nenhum produto encontrado. Tente outro termo de busca.</p>
+    <% } %>
+</div>
+
+<!-- Modal de Informação Nutricional -->
+<div class="nutrition-modal" id="nutritionModal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="modalProductName"></h2>
+        <div class="nutrition-facts">
+            <div class="nutrition-image">
+                <img id="modalProductImage" src="" alt="">
+            </div>
+            <div class="nutrition-details">
+                <h3>Informação Nutricional (por 100g)</h3>
+                <ul id="nutritionInfoList"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Manipulação do modal
+    document.querySelectorAll('.nutrition-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const nutricao = JSON.parse(this.dataset.nutricao);
+            const nome = this.dataset.nome;
+            const imagem = this.dataset.imagem;
+            
+            document.getElementById('modalProductName').textContent = nome;
+            document.getElementById('modalProductImage').src = imagem;
+            
+            const nutritionList = document.getElementById('nutritionInfoList');
+            nutritionList.innerHTML = '';
+            
+            if (nutricao) {
+                for (const [key, value] of Object.entries(nutricao)) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span>${formatNutrientName(key)}:</span> <span>${value}</span>`;
+                    nutritionList.appendChild(li);
+                }
+            } else {
+                nutritionList.innerHTML = '<li>Informação nutricional não disponível</li>';
+            }
+            
+            document.getElementById('nutritionModal').style.display = 'block';
+        });
+    });
+    
+    // Fechar modal
+    document.querySelector('.close-modal').addEventListener('click', function() {
+        document.getElementById('nutritionModal').style.display = 'none';
+    });
+    
+    // Formatar nomes dos nutrientes
+    function formatNutrientName(key) {
+        const names = {
+            'calorias': 'Calorias (kcal)',
+            'carboidratos': 'Carboidratos (g)',
+            'proteinas': 'Proteínas (g)',
+            'gorduras': 'Gorduras (g)',
+            'sodio': 'Sódio (mg)'
+        };
+        return names[key.toLowerCase()] || key;
+    }
+</script>

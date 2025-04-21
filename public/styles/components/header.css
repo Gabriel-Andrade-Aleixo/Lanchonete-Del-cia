@@ -1,0 +1,93 @@
+header {
+    background-color: var(--color-main-100); /* Branco */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--color-primary-300); /* Azul principal */
+}
+
+header h1 {
+    color: var(--color-primary-400); /* Azul escuro */
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+header h1:hover {
+    color: var(--color-primary-300); /* Azul principal - efeito hover */
+    transition: color 0.3s ease;
+}
+
+nav ul {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav a {
+    color: var(--color-main-400); /* Cinza escuro */
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+nav a:hover {
+    color: var(--color-primary-300); /* Azul principal */
+}
+
+/* Efeito sublinhado animado */
+nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-secondary-300); /* Verde principal */
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+/* Estilo para a página ativa */
+nav a.active {
+    color: var(--color-primary-400); /* Azul escuro */
+    font-weight: 600;
+}
+
+nav a.active::after {
+    width: 100%;
+    background-color: var(--color-primary-400); /* Azul escuro */
+}
+
+/* Responsividade - menu mobile */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    
+    nav a::after {
+        display: none; /* Remove efeito em mobile */
+    }
+}

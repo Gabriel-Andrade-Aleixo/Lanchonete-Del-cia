@@ -1,0 +1,36 @@
+footer {
+    background-color: var(--color-main-400); /* Cinza escuro */
+    color: var(--color-main-100); /* Branco */
+    text-align: center;
+    padding: 24px 0;
+    font-family: 'Arial', sans-serif;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    margin-top: 60px;
+    border-top: 3px solid var(--color-primary-300); /* Borda azul no topo */
+}
+
+footer p {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    font-weight: 400;
+}
+
+/* Efeitos de hover usando a paleta de cores */
+footer:hover {
+    background-color: var(--color-main-500); /* Preto ao passar mouse */
+    transition: background-color 0.3s ease;
+}
+
+/* Opcional: adicionando um link se quiser incluir no futuro */
+footer a {
+    color: var(--color-primary-200); /* Azul médio */
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--color-secondary-200); /* Verde médio */
+    text-decoration: underline;
+}
