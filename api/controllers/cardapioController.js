@@ -1,328 +1,142 @@
-const Cardapio = require('../models/cardapioModels');
-const mongoose = require('mongoose');
-const { validationResult } = require('express-validator');
-const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+
+// Caminho para o arquivo JSON
+const dataPath = path.join(__dirname, '../data/cardapio.json');
+
+// Funções auxiliares
+const readData = () => JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+const saveData = (data) => fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
 
 module.exports = {
-    criarCardapio,
     listarCardapios,
-    obterCardapioPorId,
-    atualizarCardapio,
-    deletarCardapio,
-    listarCardapiosJSON,
-    buscarItensDestaque,
-    buscarPorCategoria,
     buscarProdutos,
-    getOpenFoodFactsCategory,
-    extrairInformacoesNutricionais,
-    gerarPrecoAleatorio,
-    determinarCategoria
+    obterItemPorId,
+    criarItem,
+    atualizarItem,
+    deletarItem
 };
 
-// Função para criar um novo cardápio
-async function criarCardapio(req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-    try {
-        const novoCardapio = new Cardapio(req.body);
-        await novoCardapio.save();
-        
-        res.status(201).json({
-            success: true,
-            data: novoCardapio
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao criar cardápio',
-            error: error.message
-        });
-    }
-}
-
-// Função para listar todos os cardápios (com paginação)
+// Listar todos os itens com filtros
 async function listarCardapios(req, res) {
     try {
-        // Buscar produtos da API Open Food Facts
-        const response = await axios.get(
-            'https://world.openfoodfacts.org/cgi/search.pl', {
-                params: {
-                    search_terms: 'hamburger', // Termo de busca padrão
-                    page_size: 24,            // Quantidade de produtos
-                    json: 1                   // Formato de resposta
-                }
-            });
-        
-        // Processar os produtos
-        const produtos = response.data.products.map(produto => ({
-            nome: produto.product_name || 'Produto sem nome',
-            descricao: produto.generic_name || 'Descrição não disponível',
-            imagem: produto.image_url || '/static/images/food-placeholder.jpg',
-            preco: gerarPrecoAleatorio(), // API não fornece preço, geramos um
-            categoria: determinarCategoria(produto.categories_tags),
-            informacoesNutricionais: extrairInformacoesNutricionais(produto.nutriments),
-            ingredientes: produto.ingredients_text || 'Ingredientes não disponíveis'
-        }));
+        const { categoria, destaque } = req.query;
+        let { produtos } = readData();
+
+        produtos = produtos.filter(item => {
+            const matchesCategory = !categoria || item.categoria === categoria;
+            const matchesDestaque = !destaque || item.destaque === (destaque === 'true');
+            return matchesCategory && matchesDestaque;
+        });
 
         res.render('pages/cardapio', {
-            title: 'Cardápio - Restaurante Delícia',
-            produtos, // Agora passamos 'produtos' em vez de 'cardapios'
-            searchTerm: 'hamburger' // Termo de busca atual
+            title: 'Cardápio Completo',
+            produtos,
+            searchTerm: '',
+            categoria: categoria || ''
         });
 
     } catch (error) {
-        console.error('Erro ao buscar produtos:', error);
-        res.status(500).render('pages/error', {
-            title: 'Erro',
-            error: 'Não foi possível carregar o cardápio',
-            produtos: [] // Garante que produtos será definido
-        });
+        console.error('Erro ao carregar cardápio:', error);
+        res.status(500).send('Erro ao carregar o cardápio');
     }
 }
 
+
+// Busca de produtos
 async function buscarProdutos(req, res) {
     try {
-        const searchTerm = req.query.q || 'hamburger';
-        const categoria = req.query.categoria || '';
-        
-        // Parâmetros para a API Open Food Facts
-        const params = {
-            search_terms: searchTerm,
-            page_size: 24,
-            json: 1
-        };
-        
-        // Adicionar filtro por categoria se especificado
-        if (categoria) {
-            params.tag_0 = getOpenFoodFactsCategory(categoria);
-        }
-        
-        const response = await axios.get(
-            'https://world.openfoodfacts.org/cgi/search.pl', { params });
-        
-        // Processar os produtos (igual na listarCardapios)
-        const produtos = response.data.products.map(produto => ({
-            nome: produto.product_name || 'Produto sem nome',
-            descricao: produto.generic_name || 'Descrição não disponível',
-            imagem: produto.image_url || '/static/images/food-placeholder.jpg',
-            preco: gerarPrecoAleatorio(),
-            categoria: determinarCategoria(produto.categories_tags),
-            informacoesNutricionais: extrairInformacoesNutricionais(produto.nutriments),
-            ingredientes: produto.ingredients_text || 'Ingredientes não disponíveis'
-        }));
-        
-        res.render('pages/cardapio', {
-            title: `Cardápio - ${searchTerm}`,
-            produtos,
-            searchTerm,
-            categoria
+        const { q: searchTerm, categoria } = req.query;
+        let { produtos } = readData();
+
+        const resultados = produtos.filter(item => {
+            const termo = searchTerm?.toLowerCase() || '';
+            const matchesSearch = item.nome.toLowerCase().includes(termo) ||
+                                item.descricao.toLowerCase().includes(termo);
+            const matchesCategory = !categoria || item.categoria === categoria;
+            return matchesSearch && matchesCategory;
         });
-        
+
+        res.render('pages/cardapio', {
+            title: `Resultados para: ${searchTerm || 'Todos'}`,
+            produtos: resultados,
+            searchTerm: searchTerm || '',
+            categoria: categoria || ''
+        });
+
     } catch (error) {
         console.error('Erro na busca:', error);
-        res.status(500).render('pages/error', {
-            title: 'Erro',
-            error: 'Não foi possível realizar a busca',
-            produtos: []
-        });
+        res.status(500).send('Erro na busca de produtos');
     }
 }
 
-function getOpenFoodFactsCategory(categoria) {
-    const mapping = {
-        'hamburguer': 'en:hamburgers',
-        'bebida': 'en:beverages',
-        'sobremesa': 'en:desserts',
-        'acompanhamento': 'en:snacks'
-    };
-    return mapping[categoria] || '';
-}
 
-function extrairInformacoesNutricionais(nutriments) {
-    if (!nutriments) return null;
-    
-    return {
-        calorias: nutriments.energy_kcal_100g || 'N/A',
-        carboidratos: nutriments.carbohydrates_100g || 'N/A',
-        proteinas: nutriments.proteins_100g || 'N/A',
-        gorduras: nutriments.fat_100g || 'N/A',
-        sodio: nutriments.sodium_100g || 'N/A'
-    };
-}
-
-function gerarPrecoAleatorio() {
-    return (Math.random() * 30 + 5).toFixed(2); // Entre R$ 5 e R$ 35
-}
-
-
-function determinarCategoria(categories_tags) {
-    if (!categories_tags) return 'outros';
-    
-    if (categories_tags.includes('en:hamburgers')) return 'hamburguer';
-    if (categories_tags.includes('en:desserts')) return 'sobremesa';
-    if (categories_tags.includes('en:beverages')) return 'bebida';
-    if (categories_tags.includes('en:snacks')) return 'acompanhamento';
-    
-    return 'outros';
-}
-
-// Função para obter um cardápio específico pelo ID
-async function obterCardapioPorId(req, res) {
+// Obter item por ID
+async function obterItemPorId(req, res) {
     try {
-        const cardapio = await Cardapio.findById(req.params.id);
+        const { produtos } = readData();
+        const item = produtos.find(p => p.id === parseInt(req.params.id));
+
+        if (!item) return res.status(404).json({ error: 'Item não encontrado' });
+        res.json(item);
+
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar item' });
+    }
+}
+
+// Criar novo item
+async function criarItem(req, res) {
+    try {
+        const data = readData();
+        const novoItem = {
+            id: Date.now(),
+            ...req.body,
+            dataCriacao: new Date().toISOString()
+        };
+
+        data.produtos.push(novoItem);
+        saveData(data);
+        res.status(201).json(novoItem);
+
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao criar item' });
+    }
+}
+
+// Atualizar item existente
+async function atualizarItem(req, res) {
+    try {
+        const data = readData();
+        const index = data.produtos.findIndex(p => p.id === parseInt(req.params.id));
+
+        if (index === -1) return res.status(404).json({ error: 'Item não encontrado' });
+
+        const updatedItem = { ...data.produtos[index], ...req.body };
+        data.produtos[index] = updatedItem;
+        saveData(data);
+        res.json(updatedItem);
+
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao atualizar item' });
+    }
+}
+
+// Deletar item
+async function deletarItem(req, res) {
+    try {
+        const data = readData();
+        const newProducts = data.produtos.filter(p => p.id !== parseInt(req.params.id));
         
-        if (!cardapio) {
-            return res.status(404).json({
-                success: false,
-                message: 'Cardápio não encontrado'
-            });
+        if (newProducts.length === data.produtos.length) {
+            return res.status(404).json({ error: 'Item não encontrado' });
         }
 
-        res.status(200).json({
-            success: true,
-            data: cardapio
-        });
+        data.produtos = newProducts;
+        saveData(data);
+        res.json({ success: true });
+
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao buscar cardápio',
-            error: error.message
-        });
-    }
-}
-
-// Função para atualizar um cardápio pelo ID
-async function atualizarCardapio(req, res) {
-    try {
-        const cardapio = await Cardapio.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true }
-        );
-
-        if (!cardapio) {
-            return res.status(404).json({
-                success: false,
-                message: 'Cardápio não encontrado'
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            data: cardapio
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao atualizar cardápio',
-            error: error.message
-        });
-    }
-}
-
-// Função para deletar um cardápio pelo ID (soft delete)
-async function deletarCardapio(req, res) {
-    try {
-        const cardapio = await Cardapio.findByIdAndUpdate(
-            req.params.id,
-            { ativo: false },
-            { new: true }
-        );
-
-        if (!cardapio) {
-            return res.status(404).json({
-                success: false,
-                message: 'Cardápio não encontrado'
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            data: cardapio
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao remover cardápio',
-            error: error.message
-        });
-    }
-}
-
-// Função para API JSON
-async function listarCardapiosJSON(req, res) {
-    try {
-        const cardapios = await Cardapio.find({ ativo: true })
-            .select('nome itens.nome itens.preco itens.descricao itens.categoria')
-            .lean();
-
-        res.json({
-            success: true,
-            count: cardapios.length,
-            data: cardapios
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao buscar cardápios',
-            error: error.message
-        });
-    }
-}
-
-// Função para buscar itens em destaque
-async function buscarItensDestaque(req, res) {
-    try {
-        const cardapios = await Cardapio.aggregate([
-            { $match: { ativo: true } },
-            { $unwind: '$itens' },
-            { $match: { 'itens.destaque': true } },
-            { $project: { 
-                'item': '$itens',
-                'cardapio': '$nome'
-            }},
-            { $limit: 8 }
-        ]);
-
-        res.json({
-            success: true,
-            data: cardapios
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao buscar itens em destaque',
-            error: error.message
-        });
-    }
-}
-
-// Função para buscar por categoria
-async function buscarPorCategoria(req, res) {
-    try {
-        const categoria = req.params.categoria;
-        const cardapios = await Cardapio.aggregate([
-            { $match: { ativo: true } },
-            { $unwind: '$itens' },
-            { $match: { 'itens.categoria': categoria } },
-            { $project: { 
-                'item': '$itens',
-                'cardapio': '$nome'
-            }}
-        ]);
-
-        res.json({
-            success: true,
-            data: cardapios
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao buscar por categoria',
-            error: error.message
-        });
+        res.status(500).json({ error: 'Erro ao deletar item' });
     }
 }

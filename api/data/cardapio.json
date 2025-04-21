@@ -1,0 +1,84 @@
+{
+  "produtos": [
+    {
+      "id": 1,
+      "nome": "X-Burguer",
+      "descricao": "Hambúrguer simples com queijo e maionese",
+      "preco": 12.50,
+      "categoria": "Lanche",
+      "destaque": true
+    },
+    {
+      "id": 2,
+      "nome": "X-Salada",
+      "descricao": "Hambúrguer com alface, tomate e queijo",
+      "preco": 14.00,
+      "categoria": "Lanche",
+      "destaque": false
+    },
+    {
+      "id": 3,
+      "nome": "Batata Frita Média",
+      "descricao": "Porção média de batata frita crocante",
+      "preco": 8.00,
+      "categoria": "Acompanhamento",
+      "destaque": true
+    },
+    {
+      "id": 4,
+      "nome": "Refrigerante Lata",
+      "descricao": "Coca-Cola, Guaraná ou Fanta (350ml)",
+      "preco": 5.00,
+      "categoria": "Bebida",
+      "destaque": false
+    },
+    {
+      "id": 5,
+      "nome": "Suco Natural",
+      "descricao": "Suco natural de laranja ou abacaxi",
+      "preco": 6.50,
+      "categoria": "Bebida",
+      "destaque": false
+    },
+    {
+      "id": 6,
+      "nome": "Cheeseburguer Bacon",
+      "descricao": "Hambúrguer com queijo, bacon e molho especial",
+      "preco": 16.00,
+      "categoria": "Lanche",
+      "destaque": true
+    },
+    {
+      "id": 7,
+      "nome": "Coxinha de Frango",
+      "descricao": "Coxinha crocante recheada com frango desfiado",
+      "preco": 4.50,
+      "categoria": "Salgado",
+      "destaque": false
+    },
+    {
+      "id": 8,
+      "nome": "Pastel de Queijo",
+      "descricao": "Pastel frito recheado com queijo mussarela",
+      "preco": 5.00,
+      "categoria": "Salgado",
+      "destaque": false
+    },
+    {
+      "id": 9,
+      "nome": "X-Tudo",
+      "descricao": "Hambúrguer completo com tudo: ovo, bacon, salada, presunto, queijo",
+      "preco": 19.90,
+      "categoria": "Lanche",
+      "destaque": true
+    },
+    {
+      "id": 10,
+      "nome": "Milkshake de Chocolate",
+      "descricao": "Milkshake cremoso com calda de chocolate",
+      "preco": 10.00,
+      "categoria": "Sobremesa",
+      "destaque": true
+    }
+  ]
+}

@@ -1,46 +1,58 @@
 <div class="menu-container">
     <div class="menu-header">
-        <h1>Cardápio Digital</h1>
-        <div class="search-filter">
-            <form action="/cardapio/buscar" method="GET">
-                <input 
-                    type="text" 
-                    name="q" 
-                    value="<%= searchTerm || '' %>" 
-                    placeholder="Buscar produtos..."
-                >
-                <select name="categoria">
-                    <option value="">Todas as Categorias</option>
-                    <option value="hamburguer" <%= categoria === 'hamburguer' ? 'selected' : '' %>>Hambúrgueres</option>
-                    <option value="bebida" <%= categoria === 'bebida' ? 'selected' : '' %>>Bebidas</option>
-                    <option value="sobremesa" <%= categoria === 'sobremesa' ? 'selected' : '' %>>Sobremesas</option>
-                    <option value="acompanhamento" <%= categoria === 'acompanhamento' ? 'selected' : '' %>>Acompanhamentos</option>
-                </select>
-                <button type="submit">Buscar</button>
-            </form>
-        </div>
+        <h1><%= title %></h1>
+        <form class="search-filter" action="/cardapio/buscar" method="GET">
+            <input 
+                type="text" 
+                name="q" 
+                value="<%= searchTerm %>" 
+                placeholder="Buscar por nome ou descrição..."
+                class="search-input"
+            >
+            <select name="categoria" class="category-select">
+                <option value="">Todas Categorias</option>
+                <option value="hamburguer" <%= categoria === 'hamburguer' ? 'selected' : '' %>>Hambúrgueres</option>
+                <option value="acompanhamento" <%= categoria === 'acompanhamento' ? 'selected' : '' %>>Acompanhamentos</option>
+                <option value="bebida" <%= categoria === 'bebida' ? 'selected' : '' %>>Bebidas</option>
+                <option value="sobremesa" <%= categoria === 'sobremesa' ? 'selected' : '' %>>Sobremesas</option>
+            </select>
+            <button type="submit" class="search-button">Buscar</button>
+        </form>
     </div>
 
-    <% if (typeof produtos !== 'undefined' && produtos.length > 0) { %>
+    <% if (produtos.length > 0) { %>
         <div class="menu-grid">
             <% produtos.forEach(produto => { %>
                 <div class="product-card">
                     <div class="product-image">
                         <img src="<%= produto.imagem %>" alt="<%= produto.nome %>">
+                        <% if (produto.destaque) { %>
+                            <span class="product-badge">🌟 Destaque</span>
+                        <% } %>
                     </div>
                     <div class="product-info">
                         <h3><%= produto.nome %></h3>
                         <p class="product-description"><%= produto.descricao %></p>
-                        <div class="product-ingredients">
-                            <strong>Ingredientes:</strong> <%= produto.ingredientes %>
-                        </div>
+                        
+                        <% if (produto.ingredientes && produto.ingredientes.length > 0) { %>
+                            <div class="product-ingredients">
+                                <strong>Ingredientes:</strong>
+                                <ul>
+                                    <% produto.ingredientes.forEach(ingrediente => { %>
+                                        <li><%= ingrediente %></li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                        <% } %>
+
                         <div class="product-footer">
-                            <span class="product-price">R$ <%= produto.preco %></span>
+                            <div class="price-container">
+                                <span class="product-price">R$ <%= produto.preco.toFixed(2) %></span>
+                            </div>
                             <button class="nutrition-btn" 
                                 data-nutricao='<%= JSON.stringify(produto.informacoesNutricionais) %>'
-                                data-nome="<%= produto.nome %>"
-                                data-imagem="<%= produto.imagem %>">
-                                Informação Nutricional
+                                data-nome="<%= produto.nome %>">
+                                ℹ️ Informações Nutricionais
                             </button>
                         </div>
                     </div>
@@ -48,69 +60,70 @@
             <% }); %>
         </div>
     <% } else { %>
-        <p class="no-results">Nenhum produto encontrado. Tente outro termo de busca.</p>
+        <div class="no-results">
+            <p>Nenhum produto encontrado com os critérios de busca.</p>
+            <a href="/cardapio" class="btn-primary">Ver Cardápio Completo</a>
+        </div>
     <% } %>
 </div>
 
-<!-- Modal de Informação Nutricional -->
+<!-- Modal de Informações Nutricionais -->
 <div class="nutrition-modal" id="nutritionModal">
     <div class="modal-content">
         <span class="close-modal">&times;</span>
         <h2 id="modalProductName"></h2>
         <div class="nutrition-facts">
-            <div class="nutrition-image">
-                <img id="modalProductImage" src="" alt="">
-            </div>
-            <div class="nutrition-details">
-                <h3>Informação Nutricional (por 100g)</h3>
-                <ul id="nutritionInfoList"></ul>
-            </div>
+            <h3>Informação Nutricional</h3>
+            <ul id="nutritionInfoList"></ul>
         </div>
     </div>
 </div>
 
 <script>
-    // Manipulação do modal
     document.querySelectorAll('.nutrition-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const nutricao = JSON.parse(this.dataset.nutricao);
-            const nome = this.dataset.nome;
-            const imagem = this.dataset.imagem;
+            const nomeProduto = this.dataset.nome;
             
-            document.getElementById('modalProductName').textContent = nome;
-            document.getElementById('modalProductImage').src = imagem;
+            document.getElementById('modalProductName').textContent = nomeProduto;
             
-            const nutritionList = document.getElementById('nutritionInfoList');
-            nutritionList.innerHTML = '';
+            const listaNutricao = document.getElementById('nutritionInfoList');
+            listaNutricao.innerHTML = '';
             
             if (nutricao) {
-                for (const [key, value] of Object.entries(nutricao)) {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<span>${formatNutrientName(key)}:</span> <span>${value}</span>`;
-                    nutritionList.appendChild(li);
+                for (const [nutriente, valor] of Object.entries(nutricao)) {
+                    const item = document.createElement('li');
+                    item.innerHTML = `
+                        <span class="nutrient-name">${formatNutrient(nutriente)}</span>
+                        <span class="nutrient-value">${valor}</span>
+                    `;
+                    listaNutricao.appendChild(item);
                 }
             } else {
-                nutritionList.innerHTML = '<li>Informação nutricional não disponível</li>';
+                listaNutricao.innerHTML = '<li>Informações não disponíveis</li>';
             }
             
             document.getElementById('nutritionModal').style.display = 'block';
         });
     });
-    
-    // Fechar modal
-    document.querySelector('.close-modal').addEventListener('click', function() {
+
+    document.querySelector('.close-modal').addEventListener('click', () => {
         document.getElementById('nutritionModal').style.display = 'none';
     });
-    
-    // Formatar nomes dos nutrientes
-    function formatNutrientName(key) {
-        const names = {
+
+    window.addEventListener('click', (event) => {
+        if (event.target === document.getElementById('nutritionModal')) {
+            document.getElementById('nutritionModal').style.display = 'none';
+        }
+    });
+
+    function formatNutrient(nutriente) {
+        const formatacoes = {
             'calorias': 'Calorias (kcal)',
             'carboidratos': 'Carboidratos (g)',
             'proteinas': 'Proteínas (g)',
-            'gorduras': 'Gorduras (g)',
-            'sodio': 'Sódio (mg)'
+            'gorduras': 'Gorduras Totais (g)'
         };
-        return names[key.toLowerCase()] || key;
+        return formatacoes[nutriente] || nutriente;
     }
 </script>
