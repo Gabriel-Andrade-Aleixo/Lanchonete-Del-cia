@@ -29,7 +29,8 @@ async function listarCardapios(req, res) {
             return matchesCategory && matchesDestaque;
         });
 
-        res.render('pages/cardapio', {
+        res.render('base', {
+            body: 'pages/cardapio',
             title: 'Cardápio Completo',
             produtos,
             searchTerm: '',
@@ -49,16 +50,19 @@ async function buscarProdutos(req, res) {
         const { q: searchTerm, categoria } = req.query;
         let { produtos } = readData();
 
+        const termo = (searchTerm || '').toLowerCase();
+
         const resultados = produtos.filter(item => {
-            const termo = searchTerm?.toLowerCase() || '';
-            const matchesSearch = item.nome.toLowerCase().includes(termo) ||
-                                item.descricao.toLowerCase().includes(termo);
+            const nome = item.nome?.toLowerCase() || '';
+            const descricao = item.descricao?.toLowerCase() || '';
+            const matchesSearch = nome.includes(termo) || descricao.includes(termo);
             const matchesCategory = !categoria || item.categoria === categoria;
             return matchesSearch && matchesCategory;
         });
 
-        res.render('pages/cardapio', {
-            title: `Resultados para: ${searchTerm || 'Todos'}`,
+        res.render('base', {
+            body: 'pages/cardapio',
+            title: termo ? `Resultados para: ${searchTerm}` : 'Todos os Produtos',
             produtos: resultados,
             searchTerm: searchTerm || '',
             categoria: categoria || ''
@@ -69,6 +73,7 @@ async function buscarProdutos(req, res) {
         res.status(500).send('Erro na busca de produtos');
     }
 }
+
 
 
 // Obter item por ID
@@ -127,7 +132,7 @@ async function deletarItem(req, res) {
     try {
         const data = readData();
         const newProducts = data.produtos.filter(p => p.id !== parseInt(req.params.id));
-        
+
         if (newProducts.length === data.produtos.length) {
             return res.status(404).json({ error: 'Item não encontrado' });
         }

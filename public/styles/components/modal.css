@@ -1,0 +1,18 @@
+.nutrition-modal {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+  
+  .modal-content {
+    background: var(--color-main-100);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .nutrient-name {
+    color: var(--color-main-400);
+  }
+  
+  .nutrient-value {
+    color: var(--color-primary-400);
+  }

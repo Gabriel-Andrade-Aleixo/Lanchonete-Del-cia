@@ -1,0 +1,13 @@
+.menu-container {
+    padding: var(--space-xl);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .product-info {
+    padding: var(--space-md);
+  }
+  
+  .product-footer {
+    margin-top: var(--space-md);
+  }

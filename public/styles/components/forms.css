@@ -1,0 +1,16 @@
+.search-filter {
+    display: grid;
+    gap: var(--space-sm);
+  }
+  
+  .search-input,
+  .category-select {
+    padding: var(--space-xs) var(--space-sm);
+    border: 2px solid var(--color-main-300);
+    border-radius: var(--border-radius-lg);
+  }
+  
+  .search-input:focus {
+    border-color: var(--color-primary-300);
+    box-shadow: 0 0 0 3px var(--color-primary-100);
+  }

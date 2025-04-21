@@ -31,3 +31,32 @@
     transform: translateY(-2px);
     box-shadow: var(--shadow-sm);
 }
+
+.btn {
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--border-radius-lg);
+    transition: all 0.3s ease;
+    font-weight: 600;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary-300);
+    color: var(--color-main-100);
+    border: 2px solid var(--color-primary-300);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-primary-400);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .nutrition-btn {
+    background: none;
+    border: 2px solid var(--color-primary-300);
+    color: var(--color-primary-300);
+    padding: var(--space-xs) var(--space-sm);
+  }
+  
+  .nutrition-btn:hover {
+    background-color: var(--color-primary-100);
+  }

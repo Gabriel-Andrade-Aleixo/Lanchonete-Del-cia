@@ -1,0 +1,9 @@
+.menu-header {
+    padding: var(--space-xl) 0;
+    text-align: center;
+  }
+  
+  .menu-header h1 {
+    color: var(--color-primary-400);
+    margin-bottom: var(--space-md);
+  }

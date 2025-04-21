@@ -1,0 +1,10 @@
+@media (max-width: 768px) {
+    .menu-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+    }
+    
+    .search-filter {
+      grid-template-columns: 1fr;
+    }
+  }
