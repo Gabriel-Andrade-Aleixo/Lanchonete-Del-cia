@@ -19,7 +19,6 @@ const port = 3000;
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-
 // no seu app.js
 app.set('views', path.join(__dirname, 'api', 'views'));
 app.set('view engine', 'ejs');  

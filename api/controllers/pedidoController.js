@@ -1,4 +1,4 @@
-wmodule.exports = {
+module.exports = {
     criarPedidos,
     listarPedidoss,
     obterPedidosPorId,
