@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pedidos - Lanchonete</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    input, button, textarea { margin: 5px 0; display: block; }
+    .pedido { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>Fazer novo pedido</h1>
+  <form id="pedidoForm">
+    <label>Nome do Cliente: <input type="text" id="cliente_nome" required></label>
+    <label>Itens do Cardápio (IDs separados por vírgula): <input type="text" id="itens"></label>
+    <label>Total: <input type="number" step="0.01" id="total" required></label>
+    <label>Observações: <textarea id="observacoes"></textarea></label>
+    <button type="submit">Criar Pedido</button>
+  </form>
+
+  <h2>Pedidos cadastrados</h2>
+  <button onclick="carregarPedidos()">Atualizar Lista</button>
+  <div id="listaPedidos"></div>
+
+  <script>
+    const apiUrl = 'http://localhost:3000/pedidos'; // Altere a porta se necessário
+
+    document.getElementById('pedidoForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const cliente_nome = document.getElementById('cliente_nome').value;
+      const itensRaw = document.getElementById('itens').value;
+      const itens = itensRaw.split(',').map(i => parseInt(i.trim())).filter(i => !isNaN(i));
+      const total = parseFloat(document.getElementById('total').value);
+      const observacoes = document.getElementById('observacoes').value;
+
+
+      const body = { cliente_nome, total, observacoes, itens };
+
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+      alert(data.message || 'Pedido criado!');
+      carregarPedidos();
+    });
+
+    async function carregarPedidos() {
+      const res = await fetch(apiUrl);
+      const json = await res.json();
+
+      const container = document.getElementById('listaPedidos');
+      container.innerHTML = '';
+
+      json.data.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'pedido';
+        div.innerHTML = `
+          <strong>ID:</strong> ${p.id}<br>
+          <strong>Cliente:</strong> ${p.cliente_nome}<br>
+          <strong>Status:</strong> ${p.status}<br>
+          <strong>Total:</strong> R$ ${p.total}<br>
+          <strong>Observações:</strong> ${p.observacoes || '-'}<br>
+          <strong>Itens:</strong> ${p.Cardapios ? p.Cardapios.map(i => i.nome || i.id).join(', ') : '---'}<br>
+          <button onclick="deletarPedido(${p.id})">Deletar</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function deletarPedido(id) {
+      if (!confirm('Tem certeza que deseja excluir o pedido?')) return;
+
+      const res = await fetch(`${apiUrl}/${id}`, {
+        method: 'DELETE'
+      });
+
+      const json = await res.json();
+      alert(json.message);
+      carregarPedidos();
+    }
+
+    // Carrega ao iniciar
+    carregarPedidos();
+  </script>
+
+</body>
+</html>

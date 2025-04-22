@@ -1,6 +1,8 @@
-const sobreModel = require('../models/sobreModel');
+module.exports = {
+    getSobre
+}
 
-exports.getSobre = (req, res) => {
-    const info = sobreModel.getInfo();
-    res.render('sobre', { info });
+function getSobre (req, res) {
+    const info = sobreModels.getInfo();
+    res.render('sobre', { info });  
 };

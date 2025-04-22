@@ -14,7 +14,7 @@ mongoose.connect('mongodb://localhost:27017/lanchonete', {
 const indexRoutes = require('./api/routes/index');
 const cardapioRoutes = require('./api/routes/cardapio');
 const pedidoRoutes = require('./api/routes/pedido');
-const sobreRoutes = require('./api/routes/sobreRoutes');
+const sobreRoutes = require('./api/routes/sobre');
 
 
 const port = 3000;
@@ -24,8 +24,6 @@ app.use(express.urlencoded({extended: true}))
 // no seu app.js
 app.set('views', path.join(__dirname, 'api', 'views'));
 app.set('view engine', 'ejs');
-app.use('/sobre', sobreRoutes);
-
 
 // app.use('/static', express.static(__dirname + '/public'));
 
@@ -35,8 +33,10 @@ app.use(express.static('styles'));
 app.use(express.static('js'));
 app.use(express.static('scripts'));
 
+
 app.use("/cardapio", cardapioRoutes);
 app.use("/pedido", pedidoRoutes);
+app.use("/sobre", sobreRoutes);
 app.use("/", indexRoutes);
 
 // Inicia o servidor
