@@ -45,6 +45,7 @@
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
     font-weight: 800;
     letter-spacing: -1px;
+    color: white;
 }
 
 .hero h2 {
@@ -99,4 +100,78 @@
         flex-direction: column;
         gap: 1.5rem;
     }
+}
+
+.hero1 {
+    background: 
+        linear-gradient(rgba(95, 151, 168, 0.7), rgba(0, 44, 56, 0.7)),
+        url('../../images/trabalho-em-equipe.jpg') no-repeat center center;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero1::before {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: url('/static/images/wave.svg') repeat-x;
+    background-size: 1000px 100px;
+    animation: wave1 10s linear infinite;
+}
+
+@keyframes wave1 {
+    0% { background-position-x: 0; }
+    100% { background-position-x: 1000px; }
+}
+
+.hero-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background: linear-gradient(to right, #f0f4f8, #ffffff);
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.hero-content1 {
+    max-width: 960px;
+    text-align: center;
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    font-family: Arial;
+    color: #333;
+}
+
+.hero-content1 h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #0a5c82;
+}
+
+.hero-content1 h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #2d9cdb;
+}
+
+.hero-content1 p {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    text-align: justify;
+    color: #555;
 }

@@ -1,8 +1,10 @@
 module.exports = {
-    getSobre
+    listarSobre
 }
-
-function getSobre (req, res) {
-    const info = sobreModels.getInfo();
-    res.render('sobre', { info });  
+function listarSobre (req, res) {
+    console.log('Listando cardápios...');
+    res.render('base', {
+        title: 'Restaurante Delícia',
+        body: 'pages/sobre' 
+    });    
 };
