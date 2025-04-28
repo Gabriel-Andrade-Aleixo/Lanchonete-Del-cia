@@ -4,6 +4,8 @@ const path = require('path');
 // Caminho para o arquivo JSON
 const dataPath = path.join(__dirname, '../data/cardapio.json');
 
+const pedidoController = require('./controllers/pedidoController');
+
 // Funções auxiliares
 const readData = () => JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 const saveData = (data) => fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
@@ -145,3 +147,5 @@ async function deletarItem(req, res) {
         res.status(500).json({ error: 'Erro ao deletar item' });
     }
 }
+
+app.get('/cardapio', pedidoController.listarCardapio);

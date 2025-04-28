@@ -91,3 +91,18 @@ CardapioSchema.methods.adicionarItem = function(item) {
 const Cardapio = mongoose.model('Cardapio', CardapioSchema);
 
 module.exports = Cardapio;
+
+const fs = require('fs');
+const path = require('path');
+
+const cardapioPath = path.join(__dirname, '..', 'cardapio.json');
+
+function obterCardapio() {
+    if (fs.existsSync(cardapioPath)) {
+        const dados = fs.readFileSync(cardapioPath);
+        return JSON.parse(dados).produtos;
+    }
+    return [];
+}
+
+module.exports = { obterCardapio };

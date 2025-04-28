@@ -1,0 +1,12 @@
+{
+    "pedidos": [
+      {
+        "id": 1,
+        "nomes": "Gabriel AC",
+        "itens": "X-Burguer",
+        "total": "",
+        "Observacao": "Sem azeitona, por favor"
+      }
+    ]
+  }
+  
