@@ -3,36 +3,34 @@ const path = require('path');
 
 const dataPath = path.join(__dirname, '../../data/pedidos.json');
 
-// Cria o arquivo se não existir
-if (!fs.existsSync(dataPath)) {
-    fs.mkdirSync(path.dirname(dataPath), { recursive: true }); // Cria a pasta se não existir
-    fs.writeFileSync(dataPath, '[]'); // Cria o arquivo com array vazio
+function salvarPedidos(pedidos) {
+    fs.writeFileSync(dataPath, JSON.stringify(pedidos, null, 2), 'utf8');
 }
 
-// Restante do código permanece igual...
-
-function obterPedidos() {
-  const data = fs.readFileSync(dataPath);
-  return JSON.parse(data);
+function gerarNovoId(pedidos) {
+    return pedidos.length > 0 ? Math.max(...pedidos.map(p => p.id)) + 1 : 1;
 }
 
 module.exports = {
-  criarPedido: (novoPedido) => {
-    const pedidos = obterPedidos();
-    novoPedido.id = pedidos.length > 0 ? Math.max(...pedidos.map(p => p.id)) + 1 : 1;
-    novoPedido.data = new Date().toISOString();
-    novoPedido.status = 'pendente';
-    pedidos.push(novoPedido);
-    salvarPedidos(pedidos);
-    return novoPedido;
-  },
+    criarPedido: (pedidoData) => {
+        const pedidos = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+        const novoPedido = {
+            id: gerarNovoId(pedidos),
+            ...pedidoData,
+            status: 'pendente',
+            data: new Date().toISOString()
+        };
+        pedidos.push(novoPedido);
+        salvarPedidos(pedidos);
+        return novoPedido;
+    },
 
-  listarPedidos: () => {
-    return obterPedidos();
-  },
+    listarPedidos: () => {
+        return JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+    },
 
-  obterPedidoPorId: (id) => {
-    const pedidos = obterPedidos();
-    return pedidos.find(p => p.id === id);
-  }
+    obterPedidoPorId: (id) => {
+        const pedidos = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+        return pedidos.find(p => p.id === id);
+    }
 };

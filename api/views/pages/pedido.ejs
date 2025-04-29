@@ -14,65 +14,104 @@
         }
         h1 {
             color: #333;
-            border-bottom: 2px solid #ddd;
+            border-bottom: 2px solid #e74c3c;
             padding-bottom: 10px;
         }
         .pedido {
             background-color: white;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .pedido h2 {
+        .pedido-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .pedido-id {
+            font-size: 1.5em;
             color: #e74c3c;
-            margin-top: 0;
+            font-weight: bold;
         }
-        .pedido p {
-            margin: 5px 0;
+        .pedido-cliente {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .pedido-data {
+            color: #666;
+            font-size: 0.9em;
         }
         .item {
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin: 15px 0;
+            padding-bottom: 15px;
             border-bottom: 1px dashed #eee;
         }
-        .preco {
+        .item-nome {
             font-weight: bold;
+            color: #333;
+        }
+        .item-descricao {
+            color: #666;
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+        .item-quantidade, .item-preco {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        .pedido-total {
+            text-align: right;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: 15px;
             color: #27ae60;
         }
-        .status {
+        .pedido-status {
             display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 5px 10px;
+            border-radius: 20px;
             font-weight: bold;
             margin-top: 10px;
+            color: white;
         }
-        .pendente { background-color: #f39c12; color: white; }
-        .preparando { background-color: #3498db; color: white; }
-        .pronto { background-color: #2ecc71; color: white; }
+        .status-pendente { background-color: #f39c12; }
+        .status-preparando { background-color: #3498db; }
+        .status-pronto { background-color: #2ecc71; }
     </style>
 </head>
 <body>
     <h1>Pedidos em Andamento</h1>
 
+    <% if (pedidos.length === 0) { %>
+        <p>Nenhum pedido encontrado.</p>
+    <% } %>
+
     <% pedidos.forEach(pedido => { %>
         <div class="pedido">
-            <h2>Pedido #<%= pedido.id %></h2>
-            <p><strong>Cliente:</strong> <%= pedido.cliente %></p>
-            <p><strong>Data:</strong> <%= new Date(pedido.data).toLocaleString() %></p>
+            <div class="pedido-header">
+                <span class="pedido-id">Pedido #<%= pedido.id %></span>
+                <span class="pedido-data"><%= formatarData(pedido.data) %></span>
+            </div>
+            
+            <div class="pedido-cliente"><%= pedido.cliente %></div>
             
             <h3>Itens:</h3>
             <% pedido.itens.forEach(item => { %>
                 <div class="item">
-                    <p><strong><%= item.produtoId %> - <%= obterNomeProduto(item.produtoId) %></strong></p>
-                    <p>Quantidade: <%= item.quantidade %></p>
-                    <p class="preco">Preço unitário: R$ <%= item.precoUnitario.toFixed(2) %></p>
+                    <div class="item-nome"><%= cardapio[item.produtoId].nome %></div>
+                    <div class="item-descricao"><%= cardapio[item.produtoId].descricao %></div>
+                    <div>
+                        <span class="item-quantidade">Quantidade: <%= item.quantidade %></span>
+                        <span class="item-preco">Preço unitário: R$ <%= formatarMoeda(item.precoUnitario) %></span>
+                    </div>
                 </div>
             <% }); %>
             
-            <p class="preco">Total: R$ <%= pedido.total.toFixed(2) %></p>
-            <div class="status <%= pedido.status %>">
-                Status: <%= pedido.status %>
+            <div class="pedido-total">Total: R$ <%= formatarMoeda(pedido.total) %></div>
+            <div class="pedido-status status-<%= pedido.status %>">
+                <%= pedido.status.charAt(0).toUpperCase() + pedido.status.slice(1) %>
             </div>
         </div>
     <% }); %>
