@@ -1,105 +1,80 @@
-<main>
-  <h1>Faça seu Pedido</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos - Lanchonete Delícia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .pedido {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .pedido h2 {
+            color: #e74c3c;
+            margin-top: 0;
+        }
+        .pedido p {
+            margin: 5px 0;
+        }
+        .item {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #eee;
+        }
+        .preco {
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .pendente { background-color: #f39c12; color: white; }
+        .preparando { background-color: #3498db; color: white; }
+        .pronto { background-color: #2ecc71; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Pedidos em Andamento</h1>
 
-  <form id="pedidoForm">
-    <input type="text" name="nomes" placeholder="Seu nome" required>
-
-    <select name="produto" id="produto" required></select>
-
-    <input type="number" name="quantidade" id="quantidade" min="1" value="1" required>
-
-    <textarea name="observacao" placeholder="Alguma observação?"></textarea>
-
-    <p id="precoTotal">Preço Total: R$ 0,00</p>
-
-    <button type="submit">Enviar Pedido</button>
-  </form>
-
-  <h2>Pedidos Realizados</h2>
-  <ul id="listaPedidos"></ul>
-</main>
-
-<!-- Coloque o script AQUI -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-
-  let produtos = [];
-
-  async function carregarCardapio() {
-    const res = await fetch('/cardapio');
-    const dados = await res.json();
-    produtos = dados.produtos; // <-- Pega a lista dentro de "produtos"!
-
-    const select = document.getElementById('produto');
-    produtos.forEach(p => {
-      const option = document.createElement('option');
-      option.value = p.id;
-      option.textContent = `${p.nome} - R$ ${p.preco.toFixed(2)}`;
-      select.appendChild(option);
-    });
-  }
-
-  async function carregarPedidos() {
-    const res = await fetch('/pedidos');
-    const dados = await res.json();
-    const pedidos = dados.pedidos; // <-- Pega a lista dentro de "pedidos"!
-
-    const lista = document.getElementById('listaPedidos');
-    lista.innerHTML = '';
-
-    pedidos.forEach(p => {
-      const li = document.createElement('li');
-      li.textContent = `${p.nomes} pediu ${p.itens} - Total: R$ ${p.total} - Obs: ${p.Observacao}`;
-      lista.appendChild(li);
-    });
-  }
-
-  function calcularPreco() {
-    const produtoId = document.getElementById('produto').value;
-    const quantidade = parseInt(document.getElementById('quantidade').value);
-    const produto = produtos.find(p => p.id == produtoId);
-
-    if (produto) {
-      const total = produto.preco * quantidade;
-      document.getElementById('precoTotal').textContent = `Preço Total: R$ ${total.toFixed(2)}`;
-    } else {
-      document.getElementById('precoTotal').textContent = 'Preço Total: R$ 0,00';
-    }
-  }
-
-  const form = document.getElementById('pedidoForm');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    data.quantidade = parseInt(data.quantidade);
-
-    const produtoSelecionado = produtos.find(p => p.id == Number(data.produto));
-
-    if (!produtoSelecionado) {
-      alert('Produto inválido');
-      return;
-    }
-
-    const pedido = {
-      nomes: data.nomes,
-      itens: produtoSelecionado.nome,
-      total: (produtoSelecionado.preco * data.quantidade).toFixed(2),
-      Observacao: data.observacao
-    };
-
-    await fetch('/pedidos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(pedido)
-    });
-
-    form.reset();
-    calcularPreco();
-    carregarPedidos();
-  });
-
-  carregarCardapio().then(carregarPedidos);
-
-});
-</script>
+    <% pedidos.forEach(pedido => { %>
+        <div class="pedido">
+            <h2>Pedido #<%= pedido.id %></h2>
+            <p><strong>Cliente:</strong> <%= pedido.cliente %></p>
+            <p><strong>Data:</strong> <%= new Date(pedido.data).toLocaleString() %></p>
+            
+            <h3>Itens:</h3>
+            <% pedido.itens.forEach(item => { %>
+                <div class="item">
+                    <p><strong><%= item.produtoId %> - <%= obterNomeProduto(item.produtoId) %></strong></p>
+                    <p>Quantidade: <%= item.quantidade %></p>
+                    <p class="preco">Preço unitário: R$ <%= item.precoUnitario.toFixed(2) %></p>
+                </div>
+            <% }); %>
+            
+            <p class="preco">Total: R$ <%= pedido.total.toFixed(2) %></p>
+            <div class="status <%= pedido.status %>">
+                Status: <%= pedido.status %>
+            </div>
+        </div>
+    <% }); %>
+</body>
+</html>
