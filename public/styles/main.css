@@ -24,3 +24,202 @@
 @import url('utilities/animations.css');
 @import url('utilities/spacing.css');
 @import url('utilities/responsive.css');
+
+
+    
+:root {
+  --primary-color: #ff6b6b;
+  --secondary-color: #ffa502;
+  --dark-color: #2f3542;
+  --light-color: #f1f2f6;
+  --text-color: #333;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: var(--dark-color);
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+
+.destaques {
+  padding: 4rem 0;
+  background-color: #fff;
+}
+
+.produtos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.produto-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.produto-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.produto-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.produto-card h3 {
+  font-size: 1.5rem;
+  margin: 1rem 1rem 0.5rem;
+  color: var(--dark-color);
+}
+
+.produto-card p {
+  margin: 0 1rem 1rem;
+  color: #666;
+}
+
+.preco {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin: 0 1rem 1.5rem;
+}
+
+/* Seção Sobre */
+.sobre {
+  padding: 4rem 0;
+  background-color: var(--light-color);
+}
+
+.sobre-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3rem;
+}
+
+.sobre-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.sobre-text p {
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  background: var(--primary-color);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #ff5252;
+}
+
+.sobre-image {
+  flex: 1;
+  min-width: 300px;
+}
+
+.sobre-image img {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Seção Localização */
+.localizacao {
+  padding: 4rem 0;
+  background: white;
+}
+
+.mapa {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.horarios {
+  background: var(--dark-color);
+  color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.horarios h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+  text-align: center;
+}
+
+.horarios ul {
+  list-style: none;
+  padding: 0;
+}
+
+.horarios li {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .sobre-content {
+    flex-direction: column;
+  }
+  
+  .sobre-text, .sobre-image {
+    min-width: 100%;
+  }
+  
+  .produtos-grid {
+    grid-template-columns: 1fr;
+  }
+}

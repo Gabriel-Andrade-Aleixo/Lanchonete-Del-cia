@@ -49,11 +49,6 @@
                             <div class="price-container">
                                 <span class="product-price">R$ <%= produto.preco.toFixed(2) %></span>
                             </div>
-                            <button class="nutrition-btn" 
-                                data-nutricao='<%= JSON.stringify(produto.informacoesNutricionais) %>'
-                                data-nome="<%= produto.nome %>">
-                                ℹ️ Informações Nutricionais
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -67,7 +62,7 @@
     <% } %>
 </div>
 
-<!-- Modal de Informações Nutricionais -->
+<!-- Modal de Informações Nutricionais
 <div class="nutrition-modal" id="nutritionModal">
     <div class="modal-content">
         <span class="close-modal">&times;</span>
@@ -77,7 +72,7 @@
             <ul id="nutritionInfoList"></ul>
         </div>
     </div>
-</div>
+</div> -->
 
 <script>
     document.querySelectorAll('.nutrition-btn').forEach(btn => {
@@ -126,4 +121,4 @@
         };
         return formatacoes[nutriente] || nutriente;
     }
-</script>
+</script>g
