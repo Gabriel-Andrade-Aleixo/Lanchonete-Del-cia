@@ -1,119 +1,44 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedidos - Lanchonete Delícia</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
-        h1 {
-            color: #333;
-            border-bottom: 2px solid #e74c3c;
-            padding-bottom: 10px;
-        }
-        .pedido {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .pedido-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .pedido-id {
-            font-size: 1.5em;
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        .pedido-cliente {
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-        .pedido-data {
-            color: #666;
-            font-size: 0.9em;
-        }
-        .item {
-            margin: 15px 0;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed #eee;
-        }
-        .item-nome {
-            font-weight: bold;
-            color: #333;
-        }
-        .item-descricao {
-            color: #666;
-            font-size: 0.9em;
-            margin: 5px 0;
-        }
-        .item-quantidade, .item-preco {
-            display: inline-block;
-            margin-right: 15px;
-        }
-        .pedido-total {
-            text-align: right;
-            font-weight: bold;
-            font-size: 1.2em;
-            margin-top: 15px;
-            color: #27ae60;
-        }
-        .pedido-status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-top: 10px;
-            color: white;
-        }
-        .status-pendente { background-color: #f39c12; }
-        .status-preparando { background-color: #3498db; }
-        .status-pronto { background-color: #2ecc71; }
-    </style>
+    <meta charset="utf-8">
+    <title>Lista de Pedidos</title>
 </head>
+
 <body>
-    <h1>Pedidos em Andamento</h1>
-
-    <% if (pedidos.length === 0) { %>
-        <p>Nenhum pedido encontrado.</p>
-    <% } %>
-
-    <% pedidos.forEach(pedido => { %>
-        <div class="pedido">
-            <div class="pedido-header">
-                <span class="pedido-id">Pedido #<%= pedido.id %></span>
-                <span class="pedido-data"><%= formatarData(pedido.data) %></span>
-            </div>
-            
-            <div class="pedido-cliente"><%= pedido.cliente %></div>
-            
-            <h3>Itens:</h3>
-            <% pedido.itens.forEach(item => { %>
-                <div class="item">
-                    <div class="item-nome"><%= cardapio[item.produtoId].nome %></div>
-                    <div class="item-descricao"><%= cardapio[item.produtoId].descricao %></div>
-                    <div>
-                        <span class="item-quantidade">Quantidade: <%= item.quantidade %></span>
-                        <span class="item-preco">Preço unitário: R$ <%= formatarMoeda(item.precoUnitario) %></span>
-                    </div>
-                </div>
-            <% }); %>
-            
-            <div class="pedido-total">Total: R$ <%= formatarMoeda(pedido.total) %></div>
-            <div class="pedido-status status-<%= pedido.status %>">
-                <%= pedido.status.charAt(0).toUpperCase() + pedido.status.slice(1) %>
-            </div>
-        </div>
-    <% }); %>
+    <h1>Todos os Pedidos</h1>
+    <% if (pedidos.length===0) { %>
+        <p>Não há pedidos.</p>
+        <% } else { %>
+            <table border="1" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% pedidos.forEach(p=> { %>
+                        <tr>
+                            <td>
+                                <%= p.id %>
+                            </td>
+                            <td>
+                                <%= p.cliente %>
+                            </td>
+                            <td>
+                                <%= new Date(p.data).toLocaleString('pt-BR') %>
+                            </td>
+                            <td>R$ <%= p.total.toFixed(2) %>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+            <% } %>
 </body>
+
 </html>

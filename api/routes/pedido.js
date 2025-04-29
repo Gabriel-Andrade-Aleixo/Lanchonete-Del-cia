@@ -1,12 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const pedidoController = require('../controllers/pedidoController');
+const C = require('../controllers/pedidoController');
 
-// Rota principal que renderiza a página HTML
-router.get('/', pedidoController.listarPedidosPagina);
+// Renderiza página HTML com TODOS os pedidos
+router.get('/', C.listarPedidosPagina);
 
-// API REST (opcional)
-router.post('/criar/pedidos', pedidoController.criarPedido);
-router.get('/listar/pedidos', pedidoController.listarPedidos);
+// JSON puro com TODOS os pedidos
+router.get('/listar', C.listarPedidos);
+
+// Buscar um pedido pelo ID
+router.get('/:id', C.obterPedidoPorId);
+
+// Criar novo pedido
+router.post('/criar', C.criarPedido);
 
 module.exports = router;

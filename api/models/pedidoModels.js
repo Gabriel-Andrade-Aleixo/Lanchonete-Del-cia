@@ -1,36 +1,45 @@
 const fs = require('fs');
 const path = require('path');
 
-const dataPath = path.join(__dirname, '../../data/pedidos.json');
+// Se este arquivo está em /models, então suba UMA pasta e entre em api/data
+const pedidosPath = path.join(__dirname, '../data/pedidoData.json');
+console.log('Lendo JSON de pedidos em:', pedidosPath);
 
-function salvarPedidos(pedidos) {
-    fs.writeFileSync(dataPath, JSON.stringify(pedidos, null, 2), 'utf8');
+function lerPedidosDoArquivo() {
+    if (!fs.existsSync(pedidosPath)) {
+        fs.writeFileSync(pedidosPath, '[]');
+    }
+    const data = fs.readFileSync(pedidosPath, 'utf8');
+    return JSON.parse(data);
 }
 
-function gerarNovoId(pedidos) {
-    return pedidos.length > 0 ? Math.max(...pedidos.map(p => p.id)) + 1 : 1;
+function salvarPedidosNoArquivo(pedidos) {
+    fs.writeFileSync(pedidosPath, JSON.stringify(pedidos, null, 2));
+}
+
+function criarPedido(pedidoData) {
+    const pedidos = lerPedidosDoArquivo();
+    const novoPedido = {
+        id: pedidos.length > 0 ? pedidos[pedidos.length - 1].id + 1 : 1,
+        data: new Date().toISOString(),
+        ...pedidoData
+    };
+    pedidos.push(novoPedido);
+    salvarPedidosNoArquivo(pedidos);
+    return novoPedido;
+}
+
+function listarPedidos() {
+    return lerPedidosDoArquivo();
+}
+
+function buscarPedidoPorId(id) {
+    const pedidos = lerPedidosDoArquivo();
+    return pedidos.find(p => p.id === id);
 }
 
 module.exports = {
-    criarPedido: (pedidoData) => {
-        const pedidos = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-        const novoPedido = {
-            id: gerarNovoId(pedidos),
-            ...pedidoData,
-            status: 'pendente',
-            data: new Date().toISOString()
-        };
-        pedidos.push(novoPedido);
-        salvarPedidos(pedidos);
-        return novoPedido;
-    },
-
-    listarPedidos: () => {
-        return JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-    },
-
-    obterPedidoPorId: (id) => {
-        const pedidos = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-        return pedidos.find(p => p.id === id);
-    }
+    criarPedido,
+    listarPedidos,
+    buscarPedidoPorId
 };
