@@ -1,0 +1,380 @@
+<div class="pedidos-container">
+    <div class="pedidos-header">
+        <h1 class="pedidos-title">📋 Pedidos Realizados</h1>
+        <div class="pedidos-filtros">
+            <label for="filtro-status">Status:</label>
+            <select id="filtro-status" onchange="filtrarPedidos()">
+                <option value="">Todos</option>
+                <option value="PENDENTE">Pendente</option>
+                <option value="REALIZADO">Realizado</option>
+            </select>
+
+            <label for="ordenar-data">Ordenar por Data:</label>
+            <select id="ordenar-data" onchange="ordenarPedidos()">
+                <option value="asc">Mais antigos</option>
+                <option value="desc">Mais recentes</option>
+            </select>
+        </div>
+
+        <div class="total-pedidos">
+            <span class="badge">
+                <%= pedidos.length %> pedidos
+            </span>
+        </div>
+    </div>
+
+    <% if (pedidos.length===0) { %>
+        <div class="sem-pedidos">
+            <div class="sem-pedidos-icon">📭</div>
+            <p class="sem-pedidos-text">Nenhum pedido encontrado</p>
+        </div>
+        <% } else { %>
+            <div class="pedidos-list">
+                <% pedidos.forEach(pedido=> { %>
+                    <div class="pedido-card" id="pedido-<%= pedido.id %>">
+                        <div class="pedido-header">
+                            <span class="cliente-nome">
+                                <%= pedido.cliente %>
+                            </span>
+                            <span class="pedido-data" data-timestamp="<%= pedido.data %>">
+                                <%= new Date(pedido.data).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                                    month: '2-digit' , year: 'numeric' , hour: '2-digit' , minute: '2-digit' }) %>
+                            </span>
+                        </div>
+
+                        <ul class="pedido-itens">
+                            <% pedido.itens.forEach(item=> { %>
+                                <li class="pedido-item"
+                                    onclick="toggleDescricao('<%= pedido.id %>-<%= item.produtoId %>')">
+                                    <strong>
+                                        <%= item.quantidade %>x <%= item.nome %>
+                                    </strong>
+                                    — Subtotal: R$ <%= (item.preco * item.quantidade).toFixed(2) %>
+
+                                        <div id="desc-<%= pedido.id %>-<%= item.produtoId %>" class="produto-descricao"
+                                            style="display:none; margin-top:4px;">
+                                            <em>
+                                                <%= item.descricao %>
+                                            </em>
+                                        </div>
+                                </li>
+                                <% }) %>
+                        </ul>
+
+                        <p class="total">
+                            Total: R$ <%= pedido.valorTotal.toFixed(2) %>
+                        </p>
+
+                        <div class="pedido-status">
+                            <span class="status-badge <%= pedido.status==='PENDENTE'?'pendente':'realizado' %>">
+                                <%= pedido.status %>
+                            </span>
+                            <button onclick="alterarStatus('<%= pedido.id %>')" class="btn-status">
+                                Alterar Status
+                            </button>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
+            <% } %>
+</div>
+
+<script>
+    function filtrarPedidos() {
+        const filtroStatus = document.getElementById('filtro-status').value;
+        const pedidos = document.querySelectorAll('.pedido-card');
+
+        pedidos.forEach(pedido => {
+            const status = pedido.querySelector('.status-badge').innerText;
+            if (filtroStatus && status !== filtroStatus) {
+                pedido.style.display = 'none';
+            } else {
+                pedido.style.display = 'block';
+            }
+        });
+    }
+
+    function ordenarPedidos() {
+        const ordem = document.getElementById('ordenar-data').value;
+        const cards = Array.from(document.querySelectorAll('.pedido-card'));
+
+        cards.sort((a, b) => {
+            const aTs = a.querySelector('.pedido-data').dataset.timestamp;
+            const bTs = b.querySelector('.pedido-data').dataset.timestamp;
+            const dateA = new Date(aTs);
+            const dateB = new Date(bTs);
+            return ordem === 'asc'
+                ? dateA - dateB
+                : dateB - dateA;
+        });
+
+        const container = document.querySelector('.pedidos-list');
+        cards.forEach(c => container.appendChild(c));
+    }
+
+
+    async function alterarStatus(pedidoId) {
+        const card = document.getElementById('pedido-' + pedidoId);
+        const badge = card.querySelector('.status-badge');
+        const novo = badge.innerText === 'PENDENTE' ? 'REALIZADO' : 'PENDENTE';
+
+        // envia ao backend
+        const res = await fetch(`/pedido/atualizar-status/${pedidoId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: novo })
+        });
+        if (res.ok) {
+            // atualiza visualmente
+            badge.innerText = novo;
+            badge.classList.toggle('pendente');
+            badge.classList.toggle('realizado');
+        } else {
+            console.error('Erro ao atualizar status');
+        }
+    }
+    function toggleDescricao(key) {
+        const el = document.getElementById('desc-' + key);
+        if (!el) return;
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
+
+<style>
+    .pedidos-filtros {
+        display: flex;
+        gap: var(--space-md);
+        margin-bottom: var(--space-lg);
+        justify-content: space-between;
+    }
+
+    .pedidos-filtros select {
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-main-200);
+        font-size: 1rem;
+        color: var(--color-main-400);
+    }
+
+    /* Estilos Gerais */
+    .pedidos-container {
+        max-width: 1000px;
+        margin: var(--space-xl) auto;
+        padding: var(--space-md);
+        background: var(--color-main-100);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Header */
+    .pedidos-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-md);
+        border-bottom: 2px solid var(--color-main-200);
+    }
+
+    .pedidos-title {
+        color: var(--color-primary-400);
+        font-size: 1.8rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .total-pedidos .badge {
+        background: var(--color-secondary-100);
+        color: var(--color-secondary-400);
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--border-radius-lg);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Estado sem pedidos */
+    .sem-pedidos {
+        text-align: center;
+        padding: var(--space-xl) 0;
+        background: var(--color-main-200);
+        border-radius: var(--border-radius-lg);
+    }
+
+    .sem-pedidos-icon {
+        font-size: 3rem;
+        margin-bottom: var(--space-md);
+        opacity: 0.5;
+    }
+
+    .sem-pedidos-text {
+        color: var(--color-main-400);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    /* Lista de Pedidos */
+    .pedidos-list {
+        display: grid;
+        gap: var(--space-md);
+    }
+
+    /* Card do Pedido */
+    .pedido-card {
+        background: var(--color-main-100);
+        padding: var(--space-md);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+        border: 1px solid var(--color-main-200);
+    }
+
+    .pedido-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Header do Pedido */
+    .pedido-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-md);
+    }
+
+    .cliente-nome {
+        font-weight: 700;
+        color: var(--color-main-500);
+        font-size: 1.1rem;
+    }
+
+    .pedido-data {
+        color: var(--color-main-300);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Itens do Pedido */
+    .pedido-itens {
+        margin: var(--space-md) 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .pedido-item {
+        padding: var(--space-sm);
+        border-radius: var(--border-radius-sm);
+        margin-bottom: var(--space-xs);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: var(--color-main-100);
+        border: 1px solid var(--color-main-200);
+    }
+
+    .pedido-item:hover {
+        background: var(--color-main-200);
+        transform: translateX(2px);
+    }
+
+    .pedido-item strong {
+        color: var(--color-main-500);
+        font-weight: 600;
+    }
+
+    .produto-descricao {
+        color: var(--color-main-400);
+        font-size: 0.9rem;
+        margin-top: var(--space-xs);
+        padding: var(--space-xs);
+        background: var(--color-main-200);
+        border-radius: var(--border-radius-sm);
+    }
+
+    /* Total do Pedido */
+    .total {
+        text-align: right;
+        font-weight: 700;
+        color: var(--color-primary-400);
+        font-size: 1.1rem;
+        margin: var(--space-md) 0;
+    }
+
+    /* Status do Pedido */
+    .pedido-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: var(--space-md);
+        padding-top: var(--space-sm);
+        border-top: 1px solid var(--color-main-200);
+    }
+
+    .status-badge {
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--border-radius-lg);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-badge.pendente {
+        background: var(--color-secondary-100);
+        color: var(--color-secondary-400);
+        border: 1px solid var(--color-secondary-200);
+    }
+
+    .status-badge.realizado {
+        background: var(--color-primary-100);
+        color: var(--color-primary-400);
+        border: 1px solid var(--color-primary-200);
+    }
+
+    .btn-status {
+        background: var(--color-primary-300);
+        color: var(--color-main-100);
+        border: none;
+        padding: var(--space-xs) var(--space-md);
+        border-radius: var(--border-radius-lg);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-status:hover {
+        background: var(--color-primary-400);
+        transform: translateY(-1px);
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .pedidos-container {
+            padding: var(--space-sm);
+            margin: var(--space-md) auto;
+        }
+
+        .pedidos-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--space-sm);
+        }
+
+        .pedido-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--space-xs);
+        }
+
+        .pedido-status {
+            flex-direction: column;
+            gap: var(--space-sm);
+            align-items: flex-start;
+        }
+
+        .btn-status {
+            width: 100%;
+        }
+    }
+</style>

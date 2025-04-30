@@ -1,45 +1,55 @@
 const fs = require('fs');
 const path = require('path');
 
-// Se este arquivo está em /models, então suba UMA pasta e entre em api/data
-const pedidosPath = path.join(__dirname, '../data/pedidoData.json');
-console.log('Lendo JSON de pedidos em:', pedidosPath);
+const caminhoCardapio = path.join(__dirname, '../data/cardapio.json');
+const caminhoPedidos = path.join(__dirname, '../data/pedidoData.json');
 
-function lerPedidosDoArquivo() {
-    if (!fs.existsSync(pedidosPath)) {
-        fs.writeFileSync(pedidosPath, '[]');
+function lerPedidos() {
+    try {
+        if (!fs.existsSync(caminhoPedidos)) return [];
+        const dados = fs.readFileSync(caminhoPedidos, 'utf8');
+        return JSON.parse(dados);
+    } catch (err) {
+        console.error('Erro ao ler pedidos:', err);
+        return [];
     }
-    const data = fs.readFileSync(pedidosPath, 'utf8');
-    return JSON.parse(data);
 }
 
-function salvarPedidosNoArquivo(pedidos) {
-    fs.writeFileSync(pedidosPath, JSON.stringify(pedidos, null, 2));
+function salvarPedidos(pedidos) {
+    try {
+        fs.writeFileSync(caminhoPedidos, JSON.stringify(pedidos, null, 2), 'utf8');
+    } catch (err) {
+        console.error('Erro ao salvar pedidos:', err);
+    }
 }
 
-function criarPedido(pedidoData) {
-    const pedidos = lerPedidosDoArquivo();
-    const novoPedido = {
-        id: pedidos.length > 0 ? pedidos[pedidos.length - 1].id + 1 : 1,
-        data: new Date().toISOString(),
-        ...pedidoData
-    };
-    pedidos.push(novoPedido);
-    salvarPedidosNoArquivo(pedidos);
-    return novoPedido;
+function atualizarStatus(id, novoStatus) {
+    const pedidos = lerPedidos();
+    const idx = pedidos.findIndex(p => p.id === Number(id));
+    if (idx === -1) return false;
+    pedidos[idx].status = novoStatus;
+    salvarPedidos(pedidos);
+    return true;
 }
 
-function listarPedidos() {
-    return lerPedidosDoArquivo();
-}
-
-function buscarPedidoPorId(id) {
-    const pedidos = lerPedidosDoArquivo();
-    return pedidos.find(p => p.id === id);
+function lerCardapio() {
+    try {
+        const raw = fs.readFileSync(caminhoCardapio, 'utf8');
+        const json = JSON.parse(raw);
+        return json.produtos.map(p => ({
+            id: p.id,
+            nome: p.nome,
+            descricao: p.descricao,
+            preco: p.preco
+        }));
+    } catch {
+        return [];
+    }
 }
 
 module.exports = {
-    criarPedido,
-    listarPedidos,
-    buscarPedidoPorId
+    lerPedidos,
+    salvarPedidos,
+    atualizarStatus,
+    lerCardapio
 };

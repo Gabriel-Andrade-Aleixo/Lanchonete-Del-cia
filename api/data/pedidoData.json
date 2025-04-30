@@ -1,15 +1,148 @@
 [
-    {
-        "id": 1,
-        "data": "2024-04-28T14:52:00.000Z",
-        "cliente": "João",
-        "itens": [
-            {
-                "produtoId": 1,
-                "quantidade": 2,
-                "precoUnitario": 8.00
-            }
-        ],
-        "total": 16.00
-    }
+  {
+    "id": 1,
+    "data": "2024-04-28T14:52:00.000Z",
+    "cliente": "João",
+    "itens": [
+      {
+        "produtoId": 1,
+        "quantidade": 2,
+        "precoUnitario": 8
+      }
+    ],
+    "total": 16,
+    "status": "REALIZADO"
+  },
+  {
+    "id": 2,
+    "cliente": "Cliente1",
+    "data": "2025-04-30T22:39:07.897Z",
+    "itens": [
+      {
+        "produtoId": 3,
+        "quantidade": 1
+      }
+    ],
+    "status": "REALIZADO"
+  },
+  {
+    "id": 1746052877188,
+    "cliente": "Cliente2",
+    "itens": [
+      {
+        "produtoId": 2,
+        "quantidade": 5
+      },
+      {
+        "produtoId": 9,
+        "quantidade": 1
+      },
+      {
+        "produtoId": 10,
+        "quantidade": 8
+      }
+    ],
+    "data": "2025-04-30T22:41:17.189Z",
+    "status": "PENDENTE"
+  },
+  {
+    "id": 1746054664542,
+    "cliente": "Cliente3",
+    "itens": [
+      {
+        "produtoId": 10,
+        "quantidade": 150
+      }
+    ],
+    "data": "2025-04-30T23:11:04.543Z",
+    "status": "PENDENTE"
+  },
+  {
+    "id": 1746054711267,
+    "cliente": "Cliente4",
+    "itens": [
+      {
+        "produtoId": 1,
+        "quantidade": 10
+      }
+    ],
+    "data": "2025-04-30T23:11:51.267Z",
+    "status": "PENDENTE"
+  },
+  {
+    "id": 1746054949263,
+    "cliente": "Cliente5",
+    "itens": [
+      {
+        "produtoId": 1,
+        "quantidade": 15
+      },
+      {
+        "produtoId": 1,
+        "quantidade": 1
+      }
+    ],
+    "data": "2025-04-30T23:15:49.263Z",
+    "status": "PENDENTE"
+  },
+  {
+    "id": 1746055578031,
+    "cliente": "Cliente6",
+    "itens": [
+      {
+        "produtoId": 1,
+        "quantidade": 1
+      },
+      {
+        "produtoId": 5,
+        "quantidade": 1
+      }
+    ],
+    "data": "2025-04-30T23:26:18.032Z",
+    "status": "PENDENTE"
+  },
+  {
+    "id": 1746056115723,
+    "cliente": "Cliente7",
+    "itens": [
+      {
+        "produtoId": 2,
+        "quantidade": 1
+      },
+      {
+        "produtoId": 4,
+        "quantidade": 1
+      },
+      {
+        "produtoId": 1,
+        "quantidade": 1
+      },
+      {
+        "produtoId": 10,
+        "quantidade": 1
+      },
+      {
+        "produtoId": 7,
+        "quantidade": 18
+      }
+    ],
+    "data": "2025-04-30T23:35:15.723Z",
+    "status": "PENDENTE"
+  },
+  {
+    "id": 1746056512591,
+    "cliente": "Cliente8",
+    "itens": [
+      {
+        "produtoId": 4,
+        "quantidade": 1
+      },
+      {
+        "produtoId": 1,
+        "quantidade": 1
+      }
+    ],
+    "data": "2025-04-30T23:41:52.592Z",
+    "status": "PENDENTE"
+  }
 ]
