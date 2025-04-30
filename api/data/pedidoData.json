@@ -144,5 +144,17 @@
     ],
     "data": "2025-04-30T23:41:52.592Z",
     "status": "PENDENTE"
+  },
+  {
+    "id": 1746056909937,
+    "cliente": "Gabrie",
+    "itens": [
+      {
+        "produtoId": 3,
+        "quantidade": 1
+      }
+    ],
+    "data": "2025-04-30T23:48:29.937Z",
+    "status": "REALIZADO"
   }
 ]

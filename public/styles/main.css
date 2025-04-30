@@ -39,7 +39,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   color: var(--text-color);
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 20px;
 }
@@ -187,7 +187,7 @@ body {
 }
 
 .horarios h3 {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   margin-bottom: 1rem;
   color: white;
   text-align: center;
@@ -200,7 +200,7 @@ body {
 
 .horarios li {
   margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+  font-size: 1.8rem;
   display: flex;
   justify-content: space-between;
 }
