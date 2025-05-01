@@ -8,6 +8,7 @@
 }
 
 .btn-primary {
+    padding: 5px;
     background-color: var(--color-primary-300);
     color: var(--color-main-100);
     border: 2px solid var(--color-primary-300);
@@ -21,6 +22,7 @@
 }
 
 .btn-secondary {
+    padding: 5px;
     background-color: transparent;
     color: var(--color-primary-300);
     border: 2px solid var(--color-primary-300);

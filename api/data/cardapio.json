@@ -4,7 +4,7 @@
       "id": 1,
       "nome": "X-Burguer",
       "descricao": "Hambúrguer simples com queijo e maionese",
-      "preco": 12.50,
+      "preco": 15.50,
       "categoria": "Lanche",
       "destaque": true,
       "imagem": "/images/x-burguer.jpg"
@@ -24,14 +24,14 @@
       "descricao": "Porção média de batata frita crocante",
       "preco": 8.00,
       "categoria": "Acompanhamento",
-      "destaque": true,
+      "destaque": false,
       "imagem": "/images/batata-frita.jpg"
     },
     {
       "id": 4,
       "nome": "Refrigerante Lata",
       "descricao": "Coca-Cola, Guaraná ou Fanta (350ml)",
-      "preco": 5.00,
+      "preco": 7.00,
       "categoria": "Bebida",
       "destaque": false,
       "imagem": "/images/RefrigeranteLata.png"
@@ -67,7 +67,7 @@
       "id": 8,
       "nome": "Pastel de Queijo",
       "descricao": "Pastel frito recheado com queijo mussarela",
-      "preco": 5.00,
+      "preco": 6.00,
       "categoria": "Salgado",
       "destaque": false,
       "imagem": "/images/pastel-queijo.jpg"
@@ -85,10 +85,37 @@
       "id": 10,
       "nome": "Milkshake de Chocolate",
       "descricao": "Milkshake cremoso com calda de chocolate",
-      "preco": 10.00,
+      "preco": 17.00,
       "categoria": "Sobremesa",
       "destaque": true,
       "imagem": "/images/milkshake-chocolate.jpg"
+    },
+    {
+      "id": 11,
+      "nome": "Hambúrguer Premium",
+      "descricao": "Maravilhoso lanche artesanal de ingredientes selecionados",
+      "preco": 39.00,
+      "categoria": "Lanche",
+      "destaque": true,
+      "imagem": "/images/hamburguer-premium.jpg"
+    },
+    {
+      "id": 12,
+      "nome": "Combo Famílião",
+      "descricao": "Refri Coca-Cola + 3 Cheeseburguer bacon + 3 batatas fritas (p)",
+      "preco": 110.00,
+      "categoria": "Lanche",
+      "destaque": true,
+      "imagem": "/images/combofamilia.jpg"
+    },
+    {
+      "id": 13,
+      "nome": "Sorvetes Delícia",
+      "descricao": "Sorvetes Mistos",
+      "preco": 15.00,
+      "categoria": "Sobremesa",
+      "destaque": true,
+      "imagem": "/images/sobremesa.jpg"
     }
   ]
 }
